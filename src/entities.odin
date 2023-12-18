@@ -18,17 +18,15 @@ Entity :: struct {
     type        : Entity_Type,
     id          : int,
     rec         : rl.Rectangle,
-    rot         : int,
+    rot         : f32,
     spr         : Sprite,
-    spawn_id    : rl.Vector2,
 }
 
-Player_Data :: struct {
-    ent_id      : int,
+Player_Entity :: struct {
     is_moving   : bool,
     speed       : f32,
     velocity    : f32,
-    move_dir    : rl.Vector2,
+    entity      : Entity,
 }
 
 Background :: struct {
