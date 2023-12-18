@@ -21,7 +21,7 @@ init_gameplay :: proc() {
 
     cam.target = Vector2{ SCREEN.x / 2, SCREEN.y / 2 }
     cam.offset = Vector2{ SCREEN.x / 2, SCREEN.y / 2 } 
-    cam_start_off = cam.offset;
+    cam_start_off = cam.offset
     cam.rotation = 0
     cam.zoom = 1
 }
@@ -47,7 +47,7 @@ update_gameplay :: proc() {
 render_gameplay :: proc() {
     using rl
 
-    BeginMode2D(cam);
+    BeginMode2D(cam)
 	{
         render_background()
         
@@ -113,11 +113,11 @@ shake_screen :: proc(CAM : ^rl.Camera2D, INTENSITY : f32)
 
     if shaking 
     {
-		cam.offset = Vector2{ math.sin_f32(f32(GetTime() * 90)) * INTENSITY, math.sin_f32(f32(GetTime() * 180)) * INTENSITY };
-		cam.offset.x += cam_start_off.x;
-		cam.offset.y += cam_start_off.y;
+		cam.offset = Vector2{ math.sin_f32(f32(GetTime() * 90)) * INTENSITY, math.sin_f32(f32(GetTime() * 180)) * INTENSITY }
+		cam.offset.x += cam_start_off.x
+		cam.offset.y += cam_start_off.y
 	}
 	else {
-		cam.offset = cam_start_off;
+		cam.offset = cam_start_off
 	}
 }

@@ -20,7 +20,7 @@ Entity :: struct {
     rec         : rl.Rectangle,
     rot         : int,
     spr         : Sprite,
-    spawn_id    : rl.Vector2
+    spawn_id    : rl.Vector2,
 }
 
 Player_Data :: struct {
