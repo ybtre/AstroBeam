@@ -5,6 +5,8 @@ import rl "vendor:raylib"
 player          : Player_Entity
 player_beam     : Player_Beam
 
+asteroid        : Asteroid_Entity
+
 Sprite :: struct {
     src: rl.Rectangle,
     color: rl.Color,
@@ -14,6 +16,7 @@ Sprite :: struct {
 
 Entity_Type :: enum {
     ENT_PLAYER,
+    ENT_ASTEROID,
 }
 
 Entity :: struct {
@@ -26,6 +29,14 @@ Entity :: struct {
 }
 
 Player_Entity :: struct {
+    is_moving   : bool,
+    speed       : f32,
+    velocity    : f32,
+    rot_speed   : f32,
+    entity      : Entity,
+}
+
+Asteroid_Entity :: struct {
     is_moving   : bool,
     speed       : f32,
     velocity    : f32,

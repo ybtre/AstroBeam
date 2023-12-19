@@ -26,6 +26,8 @@ init_gameplay :: proc() {
     test_point = Vector2{ 20, 20 }
 
     init_player()
+
+    init_asteroid()
 }
 
 init_player :: proc() 
@@ -59,6 +61,31 @@ init_player :: proc()
     player_beam.color = PURPLE
 }
 
+init_asteroid :: proc()
+{
+    using rl
+
+    asteroid.is_moving = false
+    asteroid.speed = 2
+    asteroid.velocity = 0
+    asteroid.rot_speed = 4
+
+    e : Entity
+    e.active = true
+    e.type = .ENT_ASTEROID
+    e.id = 1
+    e.rec = Rectangle{ 150, 200, f32(8 * SCALE), f32(8 * SCALE) }
+    e.rot = 0
+
+    s : Sprite
+    s.src = Rectangle{ 0, 32, 8, 8 }
+    s.color = WHITE
+    s.center = Vector2{ f32(4 * SCALE), f32(4 * SCALE) }
+
+    e.spr = s
+    asteroid.entity = e
+}
+
 update_gameplay :: proc() {
     using rl
 
@@ -68,6 +95,8 @@ update_gameplay :: proc() {
 
 
     update_player()
+
+    update_collisions()
 
     if !is_paused
     {   
@@ -106,6 +135,18 @@ update_player :: proc()
     player_beam.rot = player.entity.rot
 }
 
+update_collisions :: proc() 
+{
+    using fmt
+    using rl
+
+    if CheckCollisionRecs(player_beam.rec, asteroid.entity.rec)
+    {
+        //shake_screen(&cam, 10)
+        println("collision")
+    }
+}
+
 render_gameplay :: proc() {
     using rl
 
@@ -129,6 +170,7 @@ render_gameplay :: proc() {
 
             {// entities
                 render_ent_of_type(.ENT_PLAYER, false) 
+                render_ent_of_type(.ENT_ASTEROID, false) 
             }
         }
     }
@@ -164,11 +206,34 @@ render_ent_of_type :: proc(TYPE : Entity_Type, DEBUG : bool)
         }
     }
 
-    if TYPE == .ENT_PLAYER
+    switch TYPE
     {
-        DrawTexturePro(TEX_SPRITESHEET, player.entity.spr.src, player.entity.rec, player.entity.spr.center, player.entity.rot, player.entity.spr.color)
-        DrawRectanglePro(player_beam.rec, player_beam.origin, player_beam.rot, player_beam.color)
+        case .ENT_PLAYER:
+        {
+            render_player()
+        }
+        case .ENT_ASTEROID:
+        {
+            render_asteroid()
+        }
     }
+}
+
+render_player :: proc() 
+{
+    using rl
+
+    DrawTexturePro(TEX_SPRITESHEET, player.entity.spr.src, player.entity.rec, player.entity.spr.center, player.entity.rot, player.entity.spr.color)
+    DrawRectanglePro(player_beam.rec, player_beam.origin, player_beam.rot, player_beam.color)
+    //TODO: NOTE: need to calculate beam rec manuially, drawrectanglepro only moves the rec visually, but not the actual rec for update purposes
+    DrawRectangleLinesEx(player_beam.rec, 5, rl.RED)
+}
+
+render_asteroid :: proc() 
+{
+    using rl
+
+    DrawTexturePro(TEX_SPRITESHEET, asteroid.entity.spr.src, asteroid.entity.rec, asteroid.entity.spr.center, asteroid.entity.rot, asteroid.entity.spr.color)
 }
 
 shake_screen :: proc(CAM : ^rl.Camera2D, INTENSITY : f32)
