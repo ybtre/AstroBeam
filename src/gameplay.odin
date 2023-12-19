@@ -226,6 +226,7 @@ render_player :: proc()
     DrawTexturePro(TEX_SPRITESHEET, player.entity.spr.src, player.entity.rec, player.entity.spr.center, player.entity.rot, player.entity.spr.color)
     DrawRectanglePro(player_beam.rec, player_beam.origin, player_beam.rot, player_beam.color)
     //TODO: NOTE: need to calculate beam rec manuially, drawrectanglepro only moves the rec visually, but not the actual rec for update purposes
+    //NOTE: https://stackoverflow.com/questions/18851761/convert-an-angle-in-degrees-to-a-vector
     DrawRectangleLinesEx(player_beam.rec, 5, rl.RED)
 }
 
