@@ -12,7 +12,7 @@ entity_count    : int           = 2
 cam             : rl.Camera2D
 cam_start_off   : rl.Vector2
 
-player          : Player_Entity
+test_point      : rl.Vector2 
 
 init_gameplay :: proc() {
     using rl
@@ -22,6 +22,8 @@ init_gameplay :: proc() {
     cam_start_off = cam.offset
     cam.rotation = 0
     cam.zoom = 1
+
+    test_point = Vector2{ 20, 20 }
 
     init_player()
 }
@@ -33,6 +35,7 @@ init_player :: proc()
     player.is_moving = false
     player.speed = 2
     player.velocity = 0
+    player.rot_speed = 4
 
     e : Entity
     e.active = true
@@ -44,10 +47,16 @@ init_player :: proc()
     s : Sprite
     s.src = Rectangle{ 0, 0, 16, 16 }
     s.color = WHITE
-    s.center = Vector2{ 0, 0 }
+    s.center = Vector2{ f32(8 * PLAYER_SCALE), f32(8 * PLAYER_SCALE) }
 
     e.spr = s
     player.entity = e
+
+    player_beam.active = true
+    player_beam.rec = Rectangle{e.rec.x - e.rec.width/3, e.rec.y - 100, e.rec.width/1.5, e.rec.height/1.5}
+    player_beam.origin = Vector2{player.entity.rec.x - 330, player.entity.rec.y - 230}
+    player_beam.rot = e.rot
+    player_beam.color = PURPLE
 }
 
 update_gameplay :: proc() {
@@ -56,6 +65,9 @@ update_gameplay :: proc() {
     if rl.IsKeyPressed(rl.KeyboardKey.P){
         is_paused = !is_paused
     }
+
+
+    update_player()
 
     if !is_paused
     {   
@@ -66,6 +78,32 @@ update_gameplay :: proc() {
     {
         pause_blink_counter += 1
     }
+}
+
+update_player :: proc() 
+{
+    using rl
+
+    player.velocity = 0
+
+    player.velocity = player.speed
+
+    if IsKeyDown(KeyboardKey.A) {
+        player.entity.rot -= player.rot_speed
+    }
+    if IsKeyDown(KeyboardKey.D) {
+        player.entity.rot += player.rot_speed
+    }
+
+    player_beam.rec = player.entity.rec
+    player_beam.rec.width /= 1.5
+    player_beam.rec.height /= 1.2
+
+    //https://stackoverflow.com/questions/1695090/easy-trig-move-an-object-in-a-position
+    player.entity.rec.x += math.sin_f32(player.entity.rot * DEG2RAD) * player.velocity
+    player.entity.rec.y -= math.cos_f32(player.entity.rot * DEG2RAD) * player.velocity
+
+    player_beam.rot = player.entity.rot
 }
 
 render_gameplay :: proc() {
@@ -129,6 +167,7 @@ render_ent_of_type :: proc(TYPE : Entity_Type, DEBUG : bool)
     if TYPE == .ENT_PLAYER
     {
         DrawTexturePro(TEX_SPRITESHEET, player.entity.spr.src, player.entity.rec, player.entity.spr.center, player.entity.rot, player.entity.spr.color)
+        DrawRectanglePro(player_beam.rec, player_beam.origin, player_beam.rot, player_beam.color)
     }
 }
 
