@@ -31,7 +31,7 @@ init_player :: proc()
     using rl
 
     player.is_moving = false
-    player.speed = 2
+    player.speed = 1
     player.velocity = 0
     player.rot_speed = 4
 
@@ -85,7 +85,7 @@ init_asteroid :: proc()
 update_gameplay :: proc() {
     using rl
 
-    if rl.IsKeyPressed(rl.KeyboardKey.P){
+    if IsKeyPressed(KeyboardKey.P){
         is_paused = !is_paused
     }
 
@@ -93,6 +93,22 @@ update_gameplay :: proc() {
     update_player()
 
     update_collisions()
+
+    fmt.println(asteroid.is_moving)
+    if asteroid.is_moving
+    {
+        rot_radians := player.entity.rot * DEG2RAD
+        asteroid_forward := Vector2{}
+        dist_offset := player_beam.dist_offset
+
+        //NOTE: https://www.reddit.com/r/gamedev/comments/bje7vd/how_to_calculate_an_objects_normalized_forward/
+        tmp_pos := Vector2{player.entity.rec.x, player.entity.rec.y}
+        asteroid_forward.x = tmp_pos.x + dist_offset * math.sin_f32(rot_radians)
+        asteroid_forward.y = tmp_pos.y - dist_offset * math.cos_f32(rot_radians)
+
+        asteroid.entity.rec.x = asteroid_forward.x
+        asteroid.entity.rec.y = asteroid_forward.y
+    }
 
     if !is_paused
     {   
@@ -119,10 +135,16 @@ update_player :: proc()
     if IsKeyDown(KeyboardKey.D) {
         player.entity.rot += player.rot_speed
     }
+    
+    rot_radians := player.entity.rot * DEG2RAD
+    //NOTE:https://stackoverflow.com/questions/1695090/easy-trig-move-an-object-in-a-position
+    player.entity.rec.x += math.sin_f32(rot_radians) * player.velocity
+    player.entity.rec.y -= math.cos_f32(rot_radians) * player.velocity
 
-    //https://stackoverflow.com/questions/1695090/easy-trig-move-an-object-in-a-position
-    player.entity.rec.x += math.sin_f32(player.entity.rot * DEG2RAD) * player.velocity
-    player.entity.rec.y -= math.cos_f32(player.entity.rot * DEG2RAD) * player.velocity
+    //NOTE: https://www.reddit.com/r/gamedev/comments/bje7vd/how_to_calculate_an_objects_normalized_forward/
+    tmp_pos := Vector2{player.entity.rec.x, player.entity.rec.y}
+    player_beam.forward.x = tmp_pos.x + player_beam.dist_offset * math.sin_f32(rot_radians)
+    player_beam.forward.y = tmp_pos.y - player_beam.dist_offset * math.cos_f32(rot_radians)
 }
 
 update_collisions :: proc() 
@@ -130,10 +152,28 @@ update_collisions :: proc()
     using fmt
     using rl
 
-    if CheckCollisionCircleRec(player_beam.forward, player_beam.radius, asteroid.entity.rec)
+    if asteroid.entity.active
     {
-        println("collision")
+        if CheckCollisionCircleRec(player_beam.forward, player_beam.radius, asteroid.entity.rec)
+        {
+            if IsKeyPressed(KeyboardKey.SPACE)
+            {
+                if !asteroid.is_moving
+                {
+                    asteroid.is_moving = true
+                }
+            }
+        }
     }
+    
+    if asteroid.is_moving
+    {
+        if IsKeyPressed(KeyboardKey.E)
+        {
+            asteroid.is_moving = false
+        }
+    }
+    
 }
 
 render_gameplay :: proc() {
@@ -214,22 +254,19 @@ render_player :: proc()
 
     DrawTexturePro(TEX_SPRITESHEET, player.entity.spr.src, player.entity.rec, player.entity.spr.center, player.entity.rot, player.entity.spr.color)
 
-    tmp_pos := Vector2{player.entity.rec.x, player.entity.rec.y}
-    player_beam.forward.x = tmp_pos.x + player_beam.dist_offset * math.sin_f32(player.entity.rot * DEG2RAD)
-    player_beam.forward.y = tmp_pos.y - player_beam.dist_offset * math.cos_f32(player.entity.rot * DEG2RAD)
     DrawCircleV(player_beam.forward, player_beam.radius, player_beam.color)
 
-    //DrawRectanglePro(player_beam.rec, player_beam.origin, player_beam.rot, player_beam.color)
-    //TODO: NOTE: need to calculate beam rec manuially, drawrectanglepro only moves the rec visually, but not the actual rec for update purposes
     //NOTE: https://stackoverflow.com/questions/18851761/convert-an-angle-in-degrees-to-a-vector
-    //DrawRectangleLinesEx(player_beam.rec, 5, rl.RED)
 }
 
 render_asteroid :: proc() 
 {
     using rl
 
-    DrawTexturePro(TEX_SPRITESHEET, asteroid.entity.spr.src, asteroid.entity.rec, asteroid.entity.spr.center, asteroid.entity.rot, asteroid.entity.spr.color)
+    if asteroid.entity.active
+    {
+        DrawTexturePro(TEX_SPRITESHEET, asteroid.entity.spr.src, asteroid.entity.rec, asteroid.entity.spr.center, asteroid.entity.rot, asteroid.entity.spr.color)
+    }
 }
 
 shake_screen :: proc(CAM : ^rl.Camera2D, INTENSITY : f32)
