@@ -46,9 +46,9 @@ Asteroid_Entity :: struct {
 
 Player_Beam :: struct {
     active      : bool,
-    rec         : rl.Rectangle,
-    origin      : rl.Vector2,
-    rot         : f32,
+    forward     : rl.Vector2,
+    radius      : f32,
+    dist_offset : f32,
     color       : rl.Color,
 }
 

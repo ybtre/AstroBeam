@@ -6,13 +6,11 @@ import "core:math"
 import rl "vendor:raylib"
 
 
-entity_pool     : [512]Entity
-entity_count    : int           = 2
+entity_pool   : [512]Entity
+entity_count  : int           = 2
 
-cam             : rl.Camera2D
-cam_start_off   : rl.Vector2
-
-test_point      : rl.Vector2 
+cam           : rl.Camera2D
+cam_start_off : rl.Vector2
 
 init_gameplay :: proc() {
     using rl
@@ -22,8 +20,6 @@ init_gameplay :: proc() {
     cam_start_off = cam.offset
     cam.rotation = 0
     cam.zoom = 1
-
-    test_point = Vector2{ 20, 20 }
 
     init_player()
 
@@ -55,9 +51,9 @@ init_player :: proc()
     player.entity = e
 
     player_beam.active = true
-    player_beam.rec = Rectangle{e.rec.x - e.rec.width/3, e.rec.y - 100, e.rec.width/1.5, e.rec.height/1.5}
-    player_beam.origin = Vector2{player.entity.rec.x - 330, player.entity.rec.y - 230}
-    player_beam.rot = e.rot
+    player_beam.forward = Vector2{0, 0}
+    player_beam.radius = 40
+    player_beam.dist_offset = 80
     player_beam.color = PURPLE
 }
 
@@ -124,15 +120,9 @@ update_player :: proc()
         player.entity.rot += player.rot_speed
     }
 
-    player_beam.rec = player.entity.rec
-    player_beam.rec.width /= 1.5
-    player_beam.rec.height /= 1.2
-
     //https://stackoverflow.com/questions/1695090/easy-trig-move-an-object-in-a-position
     player.entity.rec.x += math.sin_f32(player.entity.rot * DEG2RAD) * player.velocity
     player.entity.rec.y -= math.cos_f32(player.entity.rot * DEG2RAD) * player.velocity
-
-    player_beam.rot = player.entity.rot
 }
 
 update_collisions :: proc() 
@@ -140,9 +130,8 @@ update_collisions :: proc()
     using fmt
     using rl
 
-    if CheckCollisionRecs(player_beam.rec, asteroid.entity.rec)
+    if CheckCollisionCircleRec(player_beam.forward, player_beam.radius, asteroid.entity.rec)
     {
-        //shake_screen(&cam, 10)
         println("collision")
     }
 }
@@ -224,10 +213,16 @@ render_player :: proc()
     using rl
 
     DrawTexturePro(TEX_SPRITESHEET, player.entity.spr.src, player.entity.rec, player.entity.spr.center, player.entity.rot, player.entity.spr.color)
-    DrawRectanglePro(player_beam.rec, player_beam.origin, player_beam.rot, player_beam.color)
+
+    tmp_pos := Vector2{player.entity.rec.x, player.entity.rec.y}
+    player_beam.forward.x = tmp_pos.x + player_beam.dist_offset * math.sin_f32(player.entity.rot * DEG2RAD)
+    player_beam.forward.y = tmp_pos.y - player_beam.dist_offset * math.cos_f32(player.entity.rot * DEG2RAD)
+    DrawCircleV(player_beam.forward, player_beam.radius, player_beam.color)
+
+    //DrawRectanglePro(player_beam.rec, player_beam.origin, player_beam.rot, player_beam.color)
     //TODO: NOTE: need to calculate beam rec manuially, drawrectanglepro only moves the rec visually, but not the actual rec for update purposes
     //NOTE: https://stackoverflow.com/questions/18851761/convert-an-angle-in-degrees-to-a-vector
-    DrawRectangleLinesEx(player_beam.rec, 5, rl.RED)
+    //DrawRectangleLinesEx(player_beam.rec, 5, rl.RED)
 }
 
 render_asteroid :: proc() 
