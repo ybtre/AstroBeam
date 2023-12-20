@@ -31,7 +31,7 @@ init_player :: proc()
     using rl
 
     player.is_moving = false
-    player.speed = 1
+    player.speed = 2
     player.velocity = 0
     player.rot_speed = 4
 
@@ -94,7 +94,6 @@ update_gameplay :: proc() {
 
     update_collisions()
 
-    fmt.println(asteroid.is_moving)
     if asteroid.is_moving
     {
         rot_radians := player.entity.rot * DEG2RAD
