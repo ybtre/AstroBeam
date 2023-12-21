@@ -5,7 +5,9 @@ import rl "vendor:raylib"
 player          : Player_Entity
 player_beam     : Player_Beam
 
-asteroid        : Asteroid_Entity
+//asteroid        : Asteroid_Entity
+asteroids       : [64]Asteroid_Entity
+asteroids_count : int
 
 Sprite :: struct {
     src: rl.Rectangle,
@@ -16,7 +18,8 @@ Sprite :: struct {
 
 Entity_Type :: enum {
     ENT_PLAYER,
-    ENT_ASTEROID,
+    ENT_ASTEROID_S,
+    ENT_ASTEROID_L,
 }
 
 Entity :: struct {
@@ -37,9 +40,11 @@ Player_Entity :: struct {
 }
 
 Asteroid_Entity :: struct {
-    is_moving   : bool,
+    is_carried  : bool,
+    is_shot     : bool,
     speed       : f32,
     velocity    : f32,
+    shot_dir    : rl.Vector2,
     rot_speed   : f32,
     entity      : Entity,
 }
