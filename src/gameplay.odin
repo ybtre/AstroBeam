@@ -26,18 +26,14 @@ init_gameplay :: proc() {
 
     init_player()
 
-    asteroids[asteroids_count] = init_asteroid(Vector2{150, 200}, .ENT_ASTEROID_S)
-    asteroids_count += 1
-    asteroids[asteroids_count] = init_asteroid(Vector2{500, 600}, .ENT_ASTEROID_M)
-    asteroids_count += 1
-    asteroids[asteroids_count] = init_asteroid(Vector2{500, 200}, .ENT_ASTEROID_L)
-    asteroids_count += 1
+    init_all_asteroids()
 }
 
 
 update_gameplay :: proc() {
     using rl
 
+    //cam.target = Vector2{player.entity.rec.x, player.entity.rec.y}
     if IsKeyPressed(KeyboardKey.P){
         is_paused = !is_paused
     }

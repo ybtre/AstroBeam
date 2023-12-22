@@ -48,6 +48,18 @@ init_asteroid :: proc(SPAWN_AT : rl.Vector2, TYPE : Entity_Type) -> Asteroid_Ent
     return asteroid
 }
 
+init_all_asteroids :: proc()
+{
+    using rl
+
+    asteroids[asteroids_count] = init_asteroid(Vector2{150, 200}, .ENT_ASTEROID_S)
+    asteroids_count += 1
+    asteroids[asteroids_count] = init_asteroid(Vector2{500, 600}, .ENT_ASTEROID_M)
+    asteroids_count += 1
+    asteroids[asteroids_count] = init_asteroid(Vector2{500, 200}, .ENT_ASTEROID_L)
+    asteroids_count += 1
+}
+
 update_asteroids :: proc()
 {
     using rl
@@ -106,10 +118,15 @@ render_asteroids :: proc()
                 Vector2{player.entity.rec.x, player.entity.rec.y})
             dir := utils.vec2_normalize(dir_dist)
 
-            pos := utils.vec2_add(Vector2{player.entity.rec.x, player.entity.rec.y}, dir * 125)
+            pos := utils.vec2_add(Vector2{player.entity.rec.x, player.entity.rec.y}, dir * 120)
             if a.entity.type == .ENT_ASTEROID_S && a.is_carried
             {
-                DrawCircleV(pos, 10, RED)
+                steps := 6
+                for i in 0..<steps
+                {
+                    DrawCircleV(pos, 5 / f32(1 + f32(i) * f32(.2)), C_BEAM_COLOR)
+                    pos = utils.vec2_add(Vector2{player.entity.rec.x, player.entity.rec.y}, dir * f32(120 + (i * 15)))
+                }
             }
         }    
     }
