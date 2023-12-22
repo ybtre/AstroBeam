@@ -11,7 +11,7 @@ init_player :: proc()
     player.is_moving = false
     player.speed = 2
     player.velocity = 0
-    player.rot_speed = 4
+    player.rot_speed = 3
 
     e : Entity
     e.active = true

@@ -54,6 +54,8 @@ init_all_asteroids :: proc()
 
     asteroids[asteroids_count] = init_asteroid(Vector2{150, 200}, .ENT_ASTEROID_S)
     asteroids_count += 1
+    asteroids[asteroids_count] = init_asteroid(Vector2{150, 600}, .ENT_ASTEROID_S)
+    asteroids_count += 1
     asteroids[asteroids_count] = init_asteroid(Vector2{500, 600}, .ENT_ASTEROID_M)
     asteroids_count += 1
     asteroids[asteroids_count] = init_asteroid(Vector2{500, 200}, .ENT_ASTEROID_L)
