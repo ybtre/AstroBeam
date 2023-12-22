@@ -107,10 +107,10 @@ render_grid :: proc()
     debug_grid :: true
     if debug_grid
     {
-        for x := 0; x < 11; x += 1 {
-            for y := 0; y < 11; y += 1
+        for x := 0; x < 22; x += 1 {
+            for y := 0; y < 22; y += 1
             {
-                DrawRectangleLinesEx(Rectangle{f32((x * 16 * SCALE) + 10), f32((y * 16 * SCALE) + 10), 16 * f32(SCALE), 16 * f32(SCALE)}, 1, C_GRID) 
+                DrawRectangleLinesEx(Rectangle{f32((x * 8 * SCALE) + 10), f32((y * 8 * SCALE) + 10), 8 * f32(SCALE), 8 * f32(SCALE)}, 1, C_GRID) 
             }
         }
     }
