@@ -23,19 +23,24 @@ init_asteroid :: proc(SPAWN_AT : rl.Vector2, TYPE : Entity_Type) -> Asteroid_Ent
     e.id = 1
     e.rot = 0
 
+    s : Sprite
+    s.color = WHITE
     if e.type == .ENT_ASTEROID_S
     {
         e.rec = Rectangle{ SPAWN_AT.x, SPAWN_AT.y, f32(8 * SCALE), f32(8 * SCALE) }
+        s.src = Rectangle{ 0, 32, 8, 8 }
+    }
+    else if e.type == .ENT_ASTEROID_M
+    {
+        e.rec = Rectangle{ SPAWN_AT.x, SPAWN_AT.y, f32(16 * SCALE), f32(16 * SCALE) }
+        s.src = Rectangle{ 16, 32, 16, 16 }
     }
     else if e.type == .ENT_ASTEROID_L
     {
-        e.rec = Rectangle{ SPAWN_AT.x, SPAWN_AT.y, f32(8 * PLAYER_SCALE), f32(8 * PLAYER_SCALE) }
+        e.rec = Rectangle{ SPAWN_AT.x, SPAWN_AT.y, f32(24 * SCALE), f32(24 * SCALE) }
+        s.src = Rectangle{ 0, 48, 24, 24 }
     }
-
-    s : Sprite
-    s.src = Rectangle{ 0, 32, 8, 8 }
-    s.color = WHITE
-    s.center = Vector2{ f32(4 * SCALE), f32(4 * SCALE) }
+    s.center = Vector2{ f32(int(s.src.width / 2) * SCALE), f32(int(s.src.height / 2) * SCALE) }
 
     e.spr = s
     asteroid.entity = e

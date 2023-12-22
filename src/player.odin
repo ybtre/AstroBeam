@@ -32,7 +32,11 @@ init_player :: proc()
     player_beam.forward = Vector2{0, 0}
     player_beam.radius = 40
     player_beam.dist_offset = 70
-    player_beam.color = PURPLE
+    player_beam.color = C_BEAM_COLOR
+
+    s.src = Rectangle{ 0, 80, 16, 16 }
+    s.color = Color{ 255, 255, 255, 100 }
+    player_beam.spr = s
 }
 
 update_player :: proc() 
@@ -68,7 +72,9 @@ render_player :: proc()
 
     DrawTexturePro(TEX_SPRITESHEET, player.entity.spr.src, player.entity.rec, player.entity.spr.center, player.entity.rot, player.entity.spr.color)
 
-    DrawCircleV(player_beam.forward, player_beam.radius, player_beam.color)
+    DrawTexturePro(TEX_SPRITESHEET, player_beam.spr.src, Rectangle{player_beam.forward.x, player_beam.forward.y, f32(16 * PLAYER_SCALE), f32(16 * PLAYER_SCALE)}, player_beam.spr.center, 0, player_beam.spr.color)
+    //NOTE: for debug hitbox
+    //DrawCircleV(player_beam.forward, player_beam.radius, player_beam.color)
 
     //NOTE: https://stackoverflow.com/questions/18851761/convert-an-angle-in-degrees-to-a-vector
 }

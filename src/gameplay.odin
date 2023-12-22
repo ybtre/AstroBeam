@@ -28,6 +28,8 @@ init_gameplay :: proc() {
 
     asteroids[asteroids_count] = init_asteroid(Vector2{150, 200}, .ENT_ASTEROID_S)
     asteroids_count += 1
+    asteroids[asteroids_count] = init_asteroid(Vector2{500, 600}, .ENT_ASTEROID_M)
+    asteroids_count += 1
     asteroids[asteroids_count] = init_asteroid(Vector2{500, 200}, .ENT_ASTEROID_L)
     asteroids_count += 1
 }
@@ -94,6 +96,7 @@ render_ent_of_type :: proc(TYPE : Entity_Type, DEBUG : bool)
             render_player()
         }
         case .ENT_ASTEROID_L:
+        case .ENT_ASTEROID_M:
         case .ENT_ASTEROID_S:
         {
             render_asteroids()

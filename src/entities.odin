@@ -19,6 +19,7 @@ Sprite :: struct {
 Entity_Type :: enum {
     ENT_PLAYER,
     ENT_ASTEROID_S,
+    ENT_ASTEROID_M,
     ENT_ASTEROID_L,
 }
 
@@ -55,6 +56,7 @@ Player_Beam :: struct {
     radius      : f32,
     dist_offset : f32,
     color       : rl.Color,
+    spr         : Sprite,
 }
 
 Background :: struct {
